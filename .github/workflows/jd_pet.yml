@@ -1,26 +1,30 @@
-name: 东东萌宠
+name: 京东萌宠
 
 on:
-  workflow_dispatch:
-    push:
-        branches:
-            - main
+    workflow_dispatch:
     schedule:
-        - cron: '15 6 * * *'
+        - cron: "40 4,10,23 * * *"
+    watch:
+        types: [started]
+    repository_dispatch:
+        types: jd_pet
+
 jobs:
     build:
         runs-on: ubuntu-latest
-
+        if: github.event.repository.owner.id == github.event.sender.id
         steps:
-            - name: Checkout codes
-              uses: actions/checkout@v2
-            - name: Use Node.js
+            - uses: actions/checkout@v1
+            - name: Use Node.js 12.x
               uses: actions/setup-node@v1
               with:
-                node-version: '12.x'
-            - name: '运行 【东东萌宠】'
-              run: npm install
-            - run: node jd_pet.js
+                  node-version: 12.x
+            - name: npm install
+              run: |
+                  npm install
+            - name: "运行【京东萌宠】"
+              run: |
+                  node jd_pet.js
               env:
                 JD_COOKIE: ${{ secrets.JD_COOKIE }}
                 PUSH_KEY: ${{ secrets.PUSH_KEY }}
